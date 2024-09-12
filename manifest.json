@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Red Row Highlighter",
+  "version": "1.0",
+  "description": "Color Rows in 3rd Level Sprint",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_icon": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://automatix:8080/tfs/TLCollection/TL/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
