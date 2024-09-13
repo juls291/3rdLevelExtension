@@ -1,8 +1,6 @@
-// Helper function to find the scrollable container
 function findScrollableContainer() {
   const rows = document.querySelectorAll('.grid-row');
   
-  // Traverse the parents of one of the rows to find the scrollable container
   if (rows.length > 0) {
     let currentElement = rows[0].parentElement;
 
@@ -22,7 +20,6 @@ function findScrollableContainer() {
   return null;
 }
 
-// Search in currently loaded rows for the target ID
 function searchInLoadedRows(targetID) {
   const rows = document.querySelectorAll('.grid-row');
   
@@ -30,12 +27,14 @@ function searchInLoadedRows(targetID) {
     const idCell = row.querySelector('div[role="gridcell"][style*="width: 70px;"]');
     
     if (idCell && idCell.textContent.trim() === String(targetID)) {
-      return row; // Return the found row
+      return row;
     }
   }
   
-  return null; // Return null if not found in current rows
+  return null; // Not found in current rows
 }
+
+/* OBSOLETE
 
 function loadAllRows(container) {
   return new Promise((resolve) => {
@@ -61,7 +60,8 @@ function loadAllRows(container) {
   });
 }
 
-// Scroll and search for the target ID
+*/
+
 async function searchForID(targetID) {
   const container = findScrollableContainer();
   if (!container) {
@@ -72,68 +72,56 @@ async function searchForID(targetID) {
   let rowFound = null;
   let previousScrollHeight = -1;
   
-  // Keep scrolling until we either find the row or can't scroll anymore
   while (!rowFound) {
     rowFound = searchInLoadedRows(targetID);
 
     if (rowFound) {
-      // Scroll into view and highlight the row
       rowFound.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      rowFound.classList.add('highlighted-row'); // Highlight the found row
+      rowFound.classList.add('highlighted-row');
       return rowFound;
     }
     
-    // Check if scrolling further is possible (to load more rows)
     if (container.scrollHeight > container.clientHeight && previousScrollHeight !== container.scrollHeight) {
       previousScrollHeight = container.scrollHeight;
       
-      // Scroll down to load the next batch of rows
       container.scrollTop = container.scrollHeight;
 
-      // Wait for new rows to load (adjust the timeout based on load speed)
       await new Promise(resolve => setTimeout(resolve, 500));
     } else {
-      // If we can't scroll further, we've reached the bottom
+      // nothing found
       break;
     }
   }
 
-  // If we exit the loop without finding the row, alert the user
   alert(`Row with ID ${targetID} not found.`);
   return null;
 }
 
-// Add search button and input box to the page
 function addSearchInterface() {
-  const panel = document.querySelector('.add-panel-data'); // Place this next to the existing UI panel
+  const panel = document.querySelector('.add-panel-data');
   
   if (!panel) {
     console.error('Panel to add search box not found');
     return;
   }
 
-  // Check if search interface already exists
   let existingSearchContainer = document.querySelector('.search-container');
   if (existingSearchContainer) {
-    return; // Exit if the search interface is already present
+    return;
   }
 
-  // Create a container for the search UI
   const searchContainer = document.createElement('div');
   searchContainer.classList.add('search-container');
-  searchContainer.style.marginTop = '10px';
-  
-  // Create an input field
+
   const searchInput = document.createElement('input');
   searchInput.type = 'number';
   searchInput.placeholder = 'Enter ID to search';
-  searchInput.style.marginRight = '10px';
-  
-  // Create a search button
+  searchInput.classList.add('modern-input');
+
   const searchButton = document.createElement('button');
   searchButton.textContent = 'Search';
-  
-  // Attach event listener to the search button
+  searchButton.classList.add('modern-button');
+
   searchButton.addEventListener('click', () => {
     const targetID = searchInput.value;
     if (targetID) {
@@ -143,35 +131,72 @@ function addSearchInterface() {
     }
   });
 
-  // Append input and button to the container
   searchContainer.appendChild(searchInput);
   searchContainer.appendChild(searchButton);
-  
-  // Add the search container to the existing panel
+
   panel.appendChild(searchContainer);
 }
 
-// Add CSS for highlighting rows
 const style = document.createElement('style');
 style.textContent = `
+  /* Modern input styling */
+  .modern-input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 200px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s ease;
+    margin-right: 10px;
+  }
+  
+  .modern-input:focus {
+    border-color: #007BFF;
+  }
+
+  /* Modern button styling */
+  .modern-button {
+    padding: 10px 20px;
+    line-height: 0px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+  }
+
+  .modern-button:hover {
+    background-color: #0056b3;
+  }
+
+  .search-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #eaeaea;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+  }
+
+  /* Highlighted row styling */
   .highlighted-row {
     background-color: yellow !important;
-  }
-  .search-container {
-    margin-top: 10px;
   }
 `;
 document.head.appendChild(style);
 
-// Call the function to add the search interface on page load
 window.addEventListener('load', addSearchInterface);
 
-// MutationObserver to apply existing rules and ensure the search interface remains
 function processRows() {
   const rows = document.querySelectorAll('.grid-row');
 
   rows.forEach(row => {
-    // Your existing logic to process rows
     const statusElement = row.querySelector('.workitem-state-value');
     let statusText = '';
 
@@ -225,27 +250,25 @@ function processRows() {
     }
 
     if (containsIFTag) {
-      row.style.backgroundColor = '#F5B7B1'; // Light red/pink
+      row.style.backgroundColor = '#F5B7B1';
     } else if (specificDivText.includes('3rd Tagessprint')) {
-      row.style.backgroundColor = '#A9DFBF'; // Green for Tagessprint
+      row.style.backgroundColor = '#A9DFBF';
     } else if (assignedToText && !specificDivText.includes('3rd Tagessprint') && statusText != 'Waiting') {
-      row.style.backgroundColor = '#D2B48C'; // Brown for assigned items
+      row.style.backgroundColor = '#D2B48C';
     } else if (statusText === 'Active') {
-      row.style.backgroundColor = '#FFF9C4'; // Yellow for active
+      row.style.backgroundColor = '#FFF9C4';
     } else if (statusText === 'Waiting') {
-      row.style.backgroundColor = '#F5B7B1'; // Light red/pink for waiting
+      row.style.backgroundColor = '#F5B7B1';
     } else if (statusText === 'Closed') {
-      row.style.backgroundColor = ''; // Default color for closed
+      row.style.backgroundColor = '';
     } else {
       // Do nothing
     }
   });
 }
 
-// Run the function initially
 processRows();
 
-// Observe changes to the document body for dynamic updates
 const observer = new MutationObserver((mutations) => {
   let hasChanges = false;
 
@@ -254,18 +277,17 @@ const observer = new MutationObserver((mutations) => {
   });
 
   if (hasChanges) {
-    observer.disconnect();  // Temporarily stop observing to avoid recursive calls
-    processRows();          // Re-apply the processing logic
-    addSearchInterface();  // Re-add the search interface if it was removed
+    observer.disconnect();
+    processRows();
+    addSearchInterface();
     observer.observe(document.body, {
       childList: true,
       subtree: true
-    });                      // Restart observing
+    });
   }
 });
 
-// Start observing the document for changes
 observer.observe(document.body, {
-  childList: true, // Monitor direct children
-  subtree: true    // Monitor all descendants
+  childList: true,
+  subtree: true
 });

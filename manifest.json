@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Red Row Highlighter",
+  "name": "Automatix+",
   "version": "1.0",
-  "description": "Color Rows in 3rd Level Sprint",
+  "description": "Adds functionality to Automatix",
   "permissions": [
     "activeTab",
     "scripting"
