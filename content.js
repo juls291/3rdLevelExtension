@@ -98,30 +98,35 @@ async function searchForID(targetID) {
 }
 
 function addSearchInterface() {
-  const panel = document.querySelector('.add-panel-data');
+  const panelRegion = document.querySelector('.panel-region');
   
-  if (!panel) {
-    console.error('Panel to add search box not found');
+  if (!panelRegion) {
+    console.error('Panel region not found');
     return;
   }
 
+  // Check if search container already exists in the .panel-region
   let existingSearchContainer = document.querySelector('.search-container');
   if (existingSearchContainer) {
     return;
   }
 
+  // Create the search container
   const searchContainer = document.createElement('div');
   searchContainer.classList.add('search-container');
 
+  // Create input element for ID
   const searchInput = document.createElement('input');
   searchInput.type = 'number';
   searchInput.placeholder = 'Enter ID to search';
   searchInput.classList.add('modern-input');
 
+  // Create search button
   const searchButton = document.createElement('button');
   searchButton.textContent = 'Search';
   searchButton.classList.add('modern-button');
 
+  // Add event listener to search button
   searchButton.addEventListener('click', () => {
     const targetID = searchInput.value;
     if (targetID) {
@@ -131,64 +136,87 @@ function addSearchInterface() {
     }
   });
 
+  // Append input and button to search container
   searchContainer.appendChild(searchInput);
   searchContainer.appendChild(searchButton);
 
-  panel.appendChild(searchContainer);
+  // First, move the add-panel-data to the start if it exists
+  const addPanelData = document.querySelector('.add-panel-data');
+  if (addPanelData) {
+    panelRegion.appendChild(addPanelData);
+  }
+
+  // Then append the search container as the second element
+  panelRegion.appendChild(searchContainer);
 }
 
 const style = document.createElement('style');
 style.textContent = `
-  /* Modern input styling */
-  .modern-input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    width: 200px;
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.3s ease;
-    margin-right: 10px;
-  }
-  
-  .modern-input:focus {
-    border-color: #007BFF;
-  }
+/* Modern input styling */
+.modern-input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 200px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s ease;
+  margin-right: 10px;
+}
 
-  /* Modern button styling */
-  .modern-button {
-    padding: 10px 20px;
-    line-height: 0px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
-  }
+.modern-input:focus {
+  border-color: #007BFF;
+}
 
-  .modern-button:hover {
-    background-color: #0056b3;
-  }
+/* Modern button styling */
+.modern-button {
+  padding: 10px 20px;
+  line-height: 0px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
 
-  .search-container {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    margin-top: 10px;
-    padding: 10px;
-    border: 1px solid #eaeaea;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    background-color: #f9f9f9;
-  }
+.modern-button:hover {
+  background-color: #0056b3;
+}
 
-  /* Highlighted row styling */
-  .highlighted-row {
-    background-color: yellow !important;
-  }
+.search-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+}
+
+/* Highlighted row styling */
+.highlighted-row {
+  background-color: yellow !important;
+}
+
+/* Flexbox to align .add-panel-data and .search-container side by side */
+.panel-region {
+  display: flex;
+  gap: 10px; /* Adds space between the elements */
+}
+
+.add-panel-data {
+  flex-grow: 1; /* Takes up the space it needs */
+}
+
+.search-container {
+  flex-shrink: 0; /* Keeps the search container fixed in size */
+}
 `;
+
 document.head.appendChild(style);
 
 window.addEventListener('load', addSearchInterface);
