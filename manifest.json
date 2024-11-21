@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Automatix+",
   "version": "1.0",
-  "description": "Adds functionality to Automatix",
+  "description": "Colors the rows of items in TFS",
   "permissions": [
     "activeTab",
     "scripting"
